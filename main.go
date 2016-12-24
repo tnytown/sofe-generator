@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"image"
 	"image/color"
-	"image/draw"
 	"image/png"
 	"math/rand"
 	"net/http"
@@ -60,10 +59,6 @@ func generate(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, "An internal server error occurred.")
 		return
 	}
-	if i.color1 == nil || i.color2 == nil {
-		fmt.Println("oops")
-		return
-	}
 
 	// flood fill the colors: color1 = outlying area, color2 = inner shapes, TODO find a less stupid method
 	t = paint.FloodFill(t, image.Point{0, 0}, i.color1, 0)
@@ -71,11 +66,6 @@ func generate(w http.ResponseWriter, r *http.Request) {
 	t = paint.FloodFill(t, image.Point{300, 100}, i.color2, 0)
 	t = paint.FloodFill(t, image.Point{100, 320}, i.color2, 0)
 
-	c := color.RGBA{255, 105, 180, 100}
-	t.(draw.Image).Set(0, 0, c)
-	t.(draw.Image).Set(90, 300, c)
-	t.(draw.Image).Set(300, 300, c)
-	t.(draw.Image).Set(206, 76, c)
 	// invert the image if specified
 	if i.style == inverted {
 		t = effect.Invert(t)
